@@ -1,0 +1,10 @@
+<p> Please login.</p>
+<button (click)="loginWithGoogle()">Login with Google</button>
+Email :
+<input type="email" #email placeholder="Enter your username">
+<br>
+<br> Password:
+<input type="text" #password placeholder="Enter your password">
+<br>
+<br>
+<button (click)="adminLogin(email.value,password.value)">AdminLogin</button>

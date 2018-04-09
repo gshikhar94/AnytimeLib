@@ -1,0 +1,36 @@
+.book-card{
+    max-width: 400px;
+}
+.userInfo{
+    float: right;
+}
+.flex-container{
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    overflow: auto;
+    margin-top: 70px;
+}
+.book-item{
+    margin:20px;    
+    background-color: #F8F8F8;
+    background-size: contain;
+}
+
+
+.header{
+    text-align: center;
+}
+
+.card-img-top{
+    max-height: 250px;
+}  
+
+.search{
+    margin-top:10px;
+    float:center;
+}
+.modal{
+    /* width:500px; */
+}

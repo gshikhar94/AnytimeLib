@@ -1,0 +1,23 @@
+<div class="book-edit-container">
+  <mat-form-field>
+    <label>Book Name:</label>
+    <input matInput #name  value="{{data.bookDetails.name}}">
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>Author Name:</label>
+    <textarea matInput #authorName value="{{data.bookDetails.authorName}}"></textarea>
+  </mat-form-field>
+
+  <mat-form-field>
+    <label>Categories:</label>
+    <mat-select placeholder="Categories" [(ngModel)]="category">
+      <mat-option *ngFor="let category of categories" [value]="category">{{category}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- <mat-form-field> -->
+    <button color="primary" mat-raised-button (click)="submitBookDetails(name.value,authorName.value,category.value)">Submit</button>
+  <!-- </mat-form-field> -->
+</div>

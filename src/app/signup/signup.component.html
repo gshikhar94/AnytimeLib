@@ -1,0 +1,47 @@
+<div class="card" style="width: 36rem;height:35rem">
+  <div class="card-header text-white" style="background-color:#3F51B5">Sign up</div>
+  <div class="row">
+    <div class="col-12 col-md-12">
+      <form novalidate class="signup" [formGroup]="signUpForm" (ngSubmit)="signup()">
+
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Name" type="text" formControlName="name">
+        </mat-form-field>
+        <br>
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Email" type="text" formControlName="email">
+        </mat-form-field>
+        <br>
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Phone number" type="text" formControlName="phone">
+        </mat-form-field>
+        <br>
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Date Of Birth" type="text" formControlName="dob">
+        </mat-form-field>
+        <br>
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Password" type="password" formControlName="password">
+        </mat-form-field>
+        <br>
+        <br>
+        <button mat-raised-button color="primary" (click)="signup()">Submit</button>
+
+
+        <p style='color:red' *ngIf="loginError">{{errorMessage}}</p>
+        <button mat-raised-button color="warn" (click)="resetForm()">Cancel</button>
+        <!-- <button type="submit" (click)="signup(name.value,phone.value,dob.value,email.value,password.value)" mat-raised-button color="primary">Login</button> -->
+        
+        <a href="/login">Go to login page</a>
+        <br>
+        <br>
+
+      </form>
+    </div>
+    <ng-template #loading>
+      <mat-spinner></mat-spinner>
+    </ng-template>
+    <!-- <div class="col-5 col-md-5">
+    </div> -->
+  </div>
+</div>

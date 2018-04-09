@@ -1,0 +1,11 @@
+.card{
+    margin: 50px auto;
+    float: none;
+}
+.signup{
+ margin: 35px; 
+/*margin-left:50px; */
+}
+.example-full-width {
+    width: 100%;
+  }

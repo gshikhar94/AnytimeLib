@@ -1,0 +1,61 @@
+<header class="header">
+  <h1>My Books</h1>
+</header>
+
+<div class="row search">
+  <div class="col-5 col-md-5"></div>
+  <div class="col-7 col-md-7">
+    <div class="search">
+      <form class="search-form">
+        <mat-form-field class="search-full-width">
+          <input matInput [(ngModel)]="searchValue" placeholder="Search" name="search" (keyup.enter)="filterSearch(searchValue,'name')">
+        </mat-form-field>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-3 col-md-3">
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+        <mat-form-field>
+          <mat-select placeholder="Categories" [formControl]="formControl" [(ngModel)]="category" (change)="searchSomething( category,'category')"
+            multiple>
+            <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <br>
+        <button mat-button *ngIf="category" (click)="removeFilter('category')">
+          Remove filter
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="col-9 col-md-9">
+    <div class="flex-container" *ngIf="(filteredBooks|async) else loading">
+      <div class="book-item" *ngFor="let book of filteredBooks|async" (click)="selectBook(book)">
+        <div class="card" style="width: 18rem;">
+          <img class="card-img-top" [src]="book.imageUrl" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title">{{book.name}}</h5>
+            <p>
+              <i class="fas fa-heart"></i>
+              <b>{{book.likes}} Likes</b>
+            </p>
+
+            <button class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Issue/Return</button>
+            <button name='likeButton' class="btn btn-primary" (click)="likes(book.id)" [disabled]="!valid">LIKE
+              <i class="far fa-thumbs-up"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+</div>
+<app-book-detail [book]="selectedBook"></app-book-detail>
+<ng-template #loading>
+  <mat-spinner></mat-spinner>
+</ng-template>
