@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 
+
 @Injectable()
 export class AuthService {
   authState: any = null;
@@ -15,7 +16,9 @@ export class AuthService {
   isUserLoggedIn = new BehaviorSubject<boolean>(false);
 
   constructor(public af: AngularFireAuth, public database: AngularFireDatabase, public router: Router) {
+    this.getAuthenticated();
     this.isUserLoggedIn.next(true);
+    this.isUserAuthorized.next(true);
     // this.af.authState.subscribe(user => {
     //   if(user)
     //   if (this.isUserAdmin(user)) {
@@ -44,14 +47,7 @@ export class AuthService {
       password
     ).then(user => {
       this.isUserLoggedIn.next(true);
-      if (this.isUserAdmin(user)) {
-        this.isUserLoggedIn.next(true);
-        this.router.navigate(['/adminHomePage']);
-      }
-      else {
-        this.isUserLoggedIn.next(true);
-        this.router.navigate(['/bookDetails']);
-      }
+      this.isUserAdmin(user);
     }).catch(error => {
       console.log("hi");
       this.isUserLoggedIn.next(false);
@@ -62,35 +58,36 @@ export class AuthService {
 
   logout() {
     this.isUserLoggedIn.next(false);
+    this.isUserAuthorized.next(false);
     this.af.auth.signOut();
     this.router.navigate(['/login']);
   }
 
   getAuthenticated(): boolean {
-    return this.authState !== null;
+    return firebase.auth() !== null;
   }
   getCurrentUser(): any {
-    return this.getAuthenticated() ? this.authState : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser : null;
   }
   getCurrentUserId(): any {
-    return this.getAuthenticated() ? this.authState.uid : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser.uid : null;
   }
   getPhotoUrl(): any {
-    return this.getAuthenticated() ? this.authState.photoURL : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser.photoURL : null;
   }
   getName(): any {
-    return this.getAuthenticated() ? this.authState.displayName : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser.displayName : null;
   }
   getEmail(): any {
-    return this.getAuthenticated() ? this.authState.email : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser.email : null;
   }
   getPhone(): any {
-    return this.getAuthenticated() ? this.authState.phoneNumber : null;
+    return this.getAuthenticated() ? firebase.auth().currentUser.phoneNumber : null;
   }
   getCurrentUserObservable(): any {
     return this.af.authState;
   }
-  saveCurrentUser(name: string, phone: string, dob: string, email: string, password: string, id: string) {
+  saveCurrentUser(name?: string, phone?: string, dob?: string, email?: string, password?: string, id?: string) {
     console.log("hi");
     if (phone != undefined && dob != undefined && email != undefined && password != undefined) {
       let user = new Users(phone, dob, name, password, id, email, null);
@@ -104,6 +101,8 @@ export class AuthService {
     }
     else {
       let user = new Users(this.getPhone(), null, this.getName(), null, this.getCurrentUserId(), this.getEmail(), this.getPhotoUrl());
+      console.log(user);
+
       this.database.database.ref('/Users').child(this.getCurrentUserId()).set(user);
     }
   }
@@ -117,12 +116,15 @@ export class AuthService {
     this.database.list<Users>("/Users", ref => ref.orderByChild('email').equalTo(user.email)).valueChanges().subscribe(data => {
       console.log(data[0]['email']);
       if (data[0]['email'] === user.email) {
+        console.log(data[0]['role']);
         if (data[0]['role'] === "admin") {
           this.isUserAuthorized.next(true);
+          this.router.navigate(['/adminHomePage']);
           return true;
         }
         else {
           this.isUserAuthorized.next(false);
+          this.router.navigate(['/bookDetails']);
           return false;
         }
       }
