@@ -12,14 +12,17 @@ export class AppComponent {
   isLoggedIn;
   isUserAuthorized;
   constructor(public afAuth: AngularFireAuth, public authService: AuthService) {
-    this.authService.isUserLoggedIn.subscribe(value => {
-      this.isLoggedIn = value
-      console.log(this.isLoggedIn);
-    });
-    this.authService.isUserAuthorized.subscribe(value => {
-      this.isUserAuthorized = value
-      console.log(this.isUserAuthorized);
-    });
+    // this.authService.isUserLoggedIn.subscribe(value => {
+    //   this.isLoggedIn = value
+    //   console.log(this.isLoggedIn);
+    // });
+    // this.authService.isUserAuthorized.subscribe(value => {
+    //   this.isUserAuthorized = value
+    //   console.log(this.isUserAuthorized);
+    // });
+    this.isLoggedIn = localStorage.getItem("isUserLoggedIn");
+    console.log(this.isLoggedIn);
+    this.isUserAuthorized = localStorage.getItem("isUserAuthorized");
   }
   // login() {
   //   this.afAuth.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());

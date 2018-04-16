@@ -5,27 +5,22 @@ import { AngularFireDatabase, AngularFireObject } from "angularfire2/database";
 import { book } from "../book";
 import { Observable } from "rxjs/Observable";
 import { Http, Response, HttpModule } from "@angular/http";
-import { $ } from 'protractor';
 import { Users } from "../Users";
 import { AuthService } from "../providers/auth.service";
-import { Likes } from "../Likes";
-import { KeyRegistry } from '@angular/core/src/di/reflective_key';
-import { Subscription } from 'rxjs/Subscription';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/delay';
-
+import { Router } from '@angular/router';
+import { IssuedBookDetails } from '../IssuedBookDetails';
 
 @Injectable()
 export class BooksService {
-  likes: Likes;
   item: Observable<book>;
   issued: any;
   books: book[] = [];
   isIssued = new BehaviorSubject<boolean>(false);
-  checkLikes = new BehaviorSubject<number>(0);
+  book = new BehaviorSubject<book>(new book);
 
-  constructor(public af: AngularFireAuth, public database: AngularFireDatabase, public authService: AuthService) {
+  constructor(private http: Http, public af: AngularFireAuth, public database: AngularFireDatabase, public authService: AuthService, public router: Router) {
     this.getJson();
   }
 
@@ -37,50 +32,14 @@ export class BooksService {
   }
 
   getBooksDetail() {
-    // return new Promise(resolve => {
-    //   console.log(this.books);
-    //   resolve(this.books);
-
-    // })
-
     return this.database.list<book>('/Books').valueChanges().delay(1000);
-
   }
 
   getBookDetailsById(id) {
     return this.database.object<book>('/Books/' + id).valueChanges();
   }
-  // updateBookDetails(book){
-  //   this.database.object<book>('/Books/'+book.id).update({})
-  // }
-  // getCurrentUserDetails(id: string) {
-  //   return this.database.list<Users>('/Users/').valueChanges().forEach(users => users.filter(user => {
-  //     this.database.object<Users>('/Users/' + id);
-  //   }))
-  // }
-  // getBookDetailById(id: number) {
-  //   let item = this.database.list<book>('/Books/', ref => ref.orderByChild('id').equalTo(id)).valueChanges();
-  //   item.forEach(value => {
-  //     value.filter((val, index, arr) => {
-  //       return this.database.object<book>('/Books/' + id)
-  //     })
-  //   })
-  // }
-  issueBook(bookid: number) {
-    // let uid = this.authService.af.auth.currentUser.uid;
-    // console.log(this.authService.af.auth.currentUser. issuedBookId);
-    // let item = this.database.list<book>('/Books/', ref => ref.orderByChild('id').equalTo(bookid)).valueChanges();
-    // item.forEach(value => {
-    //   value.filter((val, index, arr) => {
-    //     this.database.object<book>('/Books/' + bookid).
-    //       update({
-    //         issued: val.issued + 1,
-    //         isIssued: true,
-    //         isReturned: false
-    //       })
-    //   })
-    // });
 
+  issueBook(bookid: number) {
     let booksearched: book;
     let issueNumber: number;
     this.books.filter(book => {
@@ -92,42 +51,45 @@ export class BooksService {
     console.log(issueNumber);
     console.log(booksearched);
 
-    // let issued: number;
-    // this.getBookDetailsById(bookid).forEach(value => {
-    //   book = value;
-    //   issued = book.issued + 1;
-    //   return issued;
-    // });
-
-
     this.database.object<book>("/Books/" + bookid).update({
       issued: issueNumber + 1,
-      // isIssued:true,
-      // isReturned:false
     })
-    let issuedBook = { 'userId': this.authService.af.auth.currentUser.uid };
-    this.database.database.ref("/IssuedBooks").child(booksearched.id.toString()).update(issuedBook);
 
+    let issueBook = {
+      'userId': this.authService.af.auth.currentUser.uid, 'bookId': booksearched.id.toString(),
+      'bookName': booksearched.name.toString(), 'userName': this.authService.getName()
+    }
+    var ref = this.database.database.ref("/IssuedBooks").push(issueBook);
+    ref.update({
+      id: ref.key,
+      issuedDate: this.getTodaysDate()
+    })
     console.log(this.issued);
-
-
   }
+
   checkBookIssued(bookId: number) {
-    let book = this.database.object("/IssuedBooks/" + bookId).valueChanges()
-    book.subscribe(data => {
-      if (data) {
-        if (data['userId'] === this.authService.af.auth.currentUser.uid) {
+    console.log("hi");
+    let books = this.database.list<IssuedBookDetails>("/IssuedBooks/", ref => ref.orderByChild('userId').equalTo(this.authService.getCurrentUserId())).valueChanges();
+    books.subscribe(books => {
+      for (let book of books) {
+        console.log(book);
+        console.log(book.bookId);
+        if (book.bookId == bookId) {
+          console.log(book.bookId);
           this.isIssued.next(true);
           console.log(this.isIssued.value);
         }
       }
-      else {
-        this.isIssued.next(false);
-        console.log(this.isIssued.value);
-      }
-    })
+    });
   }
 
+  getIssuedBooksDetails() {
+    let books = this.database.list<IssuedBookDetails>("/IssuedBooks/", ref => ref.orderByChild('userId')).valueChanges();
+    return books;
+  }
+  deleteIssuedBookDetails(recordId) {
+    this.database.object<IssuedBookDetails>("/IssuedBooks/" + recordId).remove();
+  }
   getLikes(bookId) {
     return this.database.object<book>("/Books/" + bookId).valueChanges();
   }
@@ -148,19 +110,20 @@ export class BooksService {
       issued: issueNumber - 1,
     })
 
-    this.database.object("/IssuedBooks/" + bookId).remove();
-    // let item = this.database.list<book>('/Books/', ref => ref.orderByChild('id').equalTo(bookId)).valueChanges();
-    // item.forEach(value => {
-    //   value.filter((val, index, arr) => {
-    //     this.database.object<book>('/Books/' + bookId).
-    //       update({
-    //         issued: val.issued - 1,
-    //         isIssued: false,
-    //         isReturned: true,
-    //       })
-    //   })
-    // });
+    let issuedBooksDetails = this.database.list<IssuedBookDetails>("/IssuedBooks", ref => ref.orderByChild('bookId')).valueChanges();
+    issuedBooksDetails.subscribe(
+      bookDetails => {
+        for (let book of bookDetails) {
+          if (book.bookId == bookId && book.userId === this.authService.getCurrentUserId()) {
+            console.log(book);
+            console.log(this.authService.getCurrentUserId());
+            this.database.object<IssuedBookDetails>('/IssuedBooks/' + book.id).remove();
+          }
+        }
+      }
+    )
   }
+
   likeBook(bookId: number) {
     let booksearched;
     let likes;
@@ -172,46 +135,47 @@ export class BooksService {
     })
     this.database.object<book>("/Books/" + bookId).update({
       likes: likes + 1,
-      // isIssued:true,
-      // isReturned:false
     })
-    //   console.log(this.authService.af.auth.currentUser.uid);
-    // let books = this.database.list<Likes>('/Likes').valueChanges();
-    // if (books) {
-    //   books.forEach(books => {
-    //     books.filter((val, index, arr) => {
-    //       let userId = "asdf";
-    //       this.database.object<Likes>('/Likes/' + id).
-    //         update({
-    //           userId: [userId, "true"],
-    //           bookLikes: val.bookLikes + 1
-    //         })
-    //     })
-    //   })
-    // }
-    // console.log(this.database.list<Users>('/Users/').query.ref.key);
   }
   pushUserRecord() {
     console.log(this.authService.af.auth.currentUser.uid);
   }
-  getBooksLikes(id: number) {
-    return this.database.list<book>('/Likes/' + id + "/bookLikes").valueChanges();
-  }
 
   updateBookRecords(id: number, name: string, authorName: string, category: string) {
-    // this.getBooksDetail().forEach(books => books.filter(book => {
     this.database.object<book>('/Books/' + id).update({
       name: name,
       authorName: authorName,
       category: category
     })
-    // }))
   }
 
   deleteBook(bookId: number) {
-    // this.getBooksDetail().forEach(books => books.filter(book => {
     this.database.object<book>('/Books/' + bookId).remove();
-    // }))
   }
 
+  getTodaysDate() {
+    var currentDate = new Date();
+    var day = currentDate.getDate();
+    var month = currentDate.getMonth() + 1;
+    var year = currentDate.getFullYear();
+    return (day + "/" + month + "/" + year);
+  }
+
+  getListOfBooksByIsbn(isbn) {
+    this.book.next(null);
+    let books: book = null;
+    this.http.get("https://www.googleapis.com/books/v1/volumes/?q=isbn:" + isbn).subscribe((response: Response) => {
+      let responseJson = response.json();
+      console.log(responseJson);
+      for (let i = 0; i < responseJson['items'].length; i++) {
+        console.log(responseJson['items'][i].volumeInfo.title);
+        console.log(responseJson['items'][i].volumeInfo.authors);
+        console.log(responseJson['items'][i].volumeInfo.imageLinks.thumbnail);
+        books = new book(null, responseJson['items'][i].volumeInfo.title, responseJson['items'][i].volumeInfo.authors[0], 0,
+          responseJson['items'][i].volumeInfo.imageLinks.thumbnail, 10, responseJson['items'][i].volumeInfo.category,
+          responseJson['items'][i].volumeInfo.rating)
+        this.book.next(books);
+      }
+    })
+  }
 }

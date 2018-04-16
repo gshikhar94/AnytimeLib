@@ -3,7 +3,9 @@
 </header>
 
 <div class="row search">
-  <div class="col-5 col-md-5"></div>
+  <div class="col-5 col-md-5">
+
+  </div>
   <div class="col-7 col-md-7">
     <div class="search">
       <form class="search-form">
@@ -12,6 +14,8 @@
         </mat-form-field>
       </form>
     </div>
+    <button mat-raised-button color="primary" *ngIf="isUserAuthorized()=='true'" data-toggle="modal" data-target="#addBookModal">Add a book</button>
+    <button mat-raised-button color="primary" routerLink="/booklogs" *ngIf="isUserAuthorized()=='true'">Book Logs</button>
   </div>
 </div>
 
@@ -20,8 +24,7 @@
     <div class="card" style="width: 18rem;">
       <div class="card-body">
         <mat-form-field>
-          <mat-select placeholder="Categories" [formControl]="formControl" [(ngModel)]="category" (change)="searchSomething( category,'category')"
-            multiple>
+          <mat-select placeholder="Categories" [(ngModel)]="category" (change)="searchSomething( category,'category')" multiple>
             <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
           </mat-select>
         </mat-form-field>
@@ -43,8 +46,10 @@
               <i class="fas fa-heart"></i>
               <b>{{book.likes}} Likes</b>
             </p>
-
-            <button class="btn btn-info" data-toggle="modal" data-target="#exampleModal">Issue/Return</button>
+            <!-- <star-rating-comp rating="'3.0'"></star-rating-comp> -->
+            <button *ngIf="isUserAuthorized()=='false'" class="btn btn-info" data-toggle="modal" data-target="#issueBookModal">Issue/Return</button>
+            <button *ngIf="isUserAuthorized()=='true'" class="btn btn-warn" (click)="deleteBook(book.id)">Delete</button>
+            <button *ngIf="isUserAuthorized()=='true'" class="btn btn-info" (click)="openDialog(book)">Edit</button>
             <button name='likeButton' class="btn btn-primary" (click)="likes(book.id)" [disabled]="!valid">LIKE
               <i class="far fa-thumbs-up"></i>
             </button>
@@ -56,6 +61,7 @@
   <br>
 </div>
 <app-book-detail [book]="selectedBook"></app-book-detail>
+<app-add-book></app-add-book>
 <ng-template #loading>
   <mat-spinner></mat-spinner>
 </ng-template>

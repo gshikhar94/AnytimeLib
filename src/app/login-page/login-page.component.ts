@@ -49,8 +49,8 @@ export class LoginPageComponent implements OnInit {
         this.loginForm.get('password').setValue('');
         console.log(error);
       });
+
   }
-  // this.angularFireDatabase.list('/Users', ref => ref.orderByChild('email').equalTo(email)).valueChanges().subscribe(data => console.log(data));
 
   resetForm() {
     this.loginForm.reset();

@@ -6,8 +6,10 @@ import { Observable } from "rxjs/Observable";
 import { AngularFireDatabase } from "angularfire2/database";
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { HelperService } from './helper.service';
 
-
+const isAuthorized = "isUserAuthorized";
+const isLoggedIn = "isUserLoggedIn";
 
 @Injectable()
 export class AuthService {
@@ -15,26 +17,18 @@ export class AuthService {
   isUserAuthorized = new BehaviorSubject<boolean>(false);
   isUserLoggedIn = new BehaviorSubject<boolean>(false);
 
-  constructor(public af: AngularFireAuth, public database: AngularFireDatabase, public router: Router) {
+
+  constructor(public af: AngularFireAuth, public database: AngularFireDatabase, public router: Router, public helperService: HelperService) {
     this.getAuthenticated();
-    this.isUserLoggedIn.next(true);
-    this.isUserAuthorized.next(true);
-    // this.af.authState.subscribe(user => {
-    //   if(user)
-    //   if (this.isUserAdmin(user)) {
-    //     this.isUserLoggedIn.next(true);
-    //     this.router.navigate(['/adminHomePage']);
-    //   }
-    //   else {
-    //     this.isUserLoggedIn.next(true);
-    //     this.router.navigate(['/bookDetails']);
-    //   }
-    // })
   }
 
   loginWithGoogle() {
     return this.af.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
-      .then(data => this.isUserLoggedIn.next(true))
+      .then(data => {
+        this.isUserLoggedIn.next(true)
+        this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString())
+        this.helperService.addToLocalStorage(isLoggedIn, this.isUserLoggedIn.value.toString())
+      })
       .catch(error => {
         this.isUserLoggedIn.next(false)
         this.router.navigate(['/login'])
@@ -48,6 +42,7 @@ export class AuthService {
     ).then(user => {
       this.isUserLoggedIn.next(true);
       this.isUserAdmin(user);
+      console.log(this.isUserAuthorized.value.toString());
     }).catch(error => {
       console.log("hi");
       this.isUserLoggedIn.next(false);
@@ -59,7 +54,10 @@ export class AuthService {
   logout() {
     this.isUserLoggedIn.next(false);
     this.isUserAuthorized.next(false);
-    this.af.auth.signOut();
+    // this.af.auth.signOut();
+    firebase.auth().signOut();
+    this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString())
+    this.helperService.addToLocalStorage(isLoggedIn, this.isUserLoggedIn.value.toString())
     this.router.navigate(['/login']);
   }
 
@@ -101,8 +99,6 @@ export class AuthService {
     }
     else {
       let user = new Users(this.getPhone(), null, this.getName(), null, this.getCurrentUserId(), this.getEmail(), this.getPhotoUrl());
-      console.log(user);
-
       this.database.database.ref('/Users').child(this.getCurrentUserId()).set(user);
     }
   }
@@ -119,6 +115,8 @@ export class AuthService {
         console.log(data[0]['role']);
         if (data[0]['role'] === "admin") {
           this.isUserAuthorized.next(true);
+          this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString())
+          this.helperService.addToLocalStorage(isLoggedIn, this.isUserLoggedIn.value.toString())
           this.router.navigate(['/adminHomePage']);
           return true;
         }

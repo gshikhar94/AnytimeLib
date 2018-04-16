@@ -12,13 +12,12 @@ export class LoginGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    if (this.authService.isUserLoggedIn.value === true) {
+    if (localStorage.getItem("isUserAuthorized").toString()=="false") {
       console.log(this.authService.isUserAuthorized.value);
+      alert("User is not logged in");
+      this.router.navigate(['/login']);
       return true;
-    }
-    else {
-      this.router.navigate(['/accessDenied']);
-      return false;
+
     }
   }
 }

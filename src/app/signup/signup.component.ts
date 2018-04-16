@@ -56,7 +56,6 @@ export class SignupComponent implements OnInit {
     this.authService.af.auth.createUserWithEmailAndPassword(email, password).then(user => {
       this.updateUserDetails(user, name);
     });
-    // this.authService.af.auth
     if (ref) {
       console.log("Data has been added successfully" + ref.key);
       ref.update({
@@ -73,5 +72,9 @@ export class SignupComponent implements OnInit {
       displayName: name,
       photoURL: "https://lh6.googleusercontent.com/-za5iEk2DJLo/AAAAAAAAAAI/AAAAAAAAAB0/bGt3OIfbU-g/photo.jpg"
     })
+  }
+
+  resetForm() {
+    this.signUpForm.reset();
   }
 }

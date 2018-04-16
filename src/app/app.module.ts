@@ -4,7 +4,6 @@ import { AngularFireModule } from "angularfire2";
 import { AuthService } from "./providers/auth.service";
 import { AppComponent } from './app.component';
 import { LoginPageComponent } from './login-page/login-page.component';
-import { HomePageComponent } from './home-page/home-page.component';
 import { RouterModule, Routes } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
@@ -16,17 +15,20 @@ import { BooksService } from './providers/books.service';
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import {
   MatButtonModule, MatCheckboxModule, MatCardModule, MatListModule, MatInputModule, MatMenuModule, MatIconModule,
-  MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatDialogModule,MatProgressSpinnerModule
+  MatToolbarModule, MatFormFieldModule, MatSelectModule, MatOptionModule, MatDialogModule, MatProgressSpinnerModule, MatTableModule
 } from "@angular/material";
+// import {StarRatingComponent} from "angular1-star-rating/src/star-rating.component";
 import { ReactiveFormsModule } from "@angular/forms";
 import { FilterPipe } from './filter.pipe';
 import { AdminHomePageComponent } from './admin-home-page/admin-home-page.component';
-import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { BooksEditDialogComponent } from './books-edit-dialog/books-edit-dialog.component';
 import { BookDetailComponent } from './book-detail/book-detail.component';
 import { AuthGuard } from './auth.guard';
 import { AccessDeniedPageComponent } from './access-denied-page/access-denied-page.component';
 import { LoginGuard } from './login.guard';
+import { HelperService } from './providers/helper.service';
+import { BookLogsComponent } from './book-logs/book-logs.component';
+import { AddBookComponent } from './add-book/add-book.component';
 
 export const firebaseConfig = {
   apiKey: "AIzaSyD_bAKxXvW5xwQPrfdNuhOmRcifaBVs9IQ",
@@ -40,24 +42,26 @@ const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginPageComponent },
   { path: 'signup', component: SignupComponent },
+  { path: 'booklogs', component: BookLogsComponent, canActivate: [AuthGuard] },
   { path: 'bookDetails', component: BooksDetailComponent },
-  { path: 'adminLogin', component: AdminLoginComponent },
   { path: 'adminHomePage', component: AdminHomePageComponent, canActivate: [AuthGuard] },
-  { path: 'accessDenied', component: AccessDeniedPageComponent }
+  { path: 'accessDenied', component: AccessDeniedPageComponent },
+  { path: 'addBook', component: AddBookComponent }
 ];
 @NgModule({
   declarations: [
     AppComponent,
     LoginPageComponent,
-    HomePageComponent,
     SignupComponent,
     BooksDetailComponent,
     FilterPipe,
     AdminHomePageComponent,
-    AdminLoginComponent,
     BooksEditDialogComponent,
     BookDetailComponent,
     AccessDeniedPageComponent,
+    BookLogsComponent,
+    AddBookComponent,
+    // StarRatingComponent
   ],
   imports: [
     BrowserModule,
@@ -67,11 +71,11 @@ const routes: Routes = [
     AngularFireAuthModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
-    MatButtonModule,MatCheckboxModule,MatCardModule,MatListModule,MatInputModule,MatMenuModule,MatIconModule,
-    MatToolbarModule,MatSelectModule,MatFormFieldModule,ReactiveFormsModule,MatOptionModule,MatDialogModule,MatProgressSpinnerModule
+    MatButtonModule, MatCheckboxModule, MatCardModule, MatListModule, MatInputModule, MatMenuModule, MatIconModule, MatTableModule,
+    MatToolbarModule, MatSelectModule, MatFormFieldModule, ReactiveFormsModule, MatOptionModule, MatDialogModule, MatProgressSpinnerModule
   ],
   entryComponents: [BooksEditDialogComponent],
-  providers: [AuthService, AngularFireDatabase, BooksService,AuthGuard,LoginGuard],
+  providers: [AuthService, AngularFireDatabase, BooksService, AuthGuard, LoginGuard, HelperService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
