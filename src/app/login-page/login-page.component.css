@@ -1,11 +1,30 @@
-/* .login{
-    margin:400px;
-
-} */
 .card{
         margin: 100px auto;
         float: none;
+        width: 36rem;
+        height:30rem;
 }
 .login{
     margin: 35px; 
+    text-align: center;
+}
+.example-full-width {
+    width: 100%;
+  }
+  .loginform  {
+    text-align: center;
+   
+}
+@media screen and (max-width: 600px) {
+    .card {
+        width: 20rem;
+        font-size:10px;
+        height:28rem;
+    }
+}
+@media screen and (max-width: 600px) {
+    .loginform  {
+        text-align: center;
+        font-size:20px;
+    }
 }

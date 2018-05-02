@@ -23,7 +23,23 @@ export class AuthService {
   }
 
   loginWithGoogle() {
-    return this.af.auth.signInWithPopup(new firebase.auth.GoogleAuthProvider())
+    return this.af.auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider())
+      .then(data => {
+        this.isUserLoggedIn.next(true);
+        this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString());
+        this.helperService.addToLocalStorage(isLoggedIn, this.isUserLoggedIn.value.toString());
+        this.saveCurrentUser();
+        this.router.navigate(['/bookDetails']);
+      })
+      .catch(error => {
+        this.isUserLoggedIn.next(false);
+        console.log("Error ocurrred while logging using facebook"+error);
+        this.router.navigate(['/login'])
+      });
+  }
+
+  loginWithFacebook() {
+    return this.af.auth.signInWithRedirect(new firebase.auth.FacebookAuthProvider())
       .then(data => {
         this.isUserLoggedIn.next(true)
         this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString())
@@ -58,6 +74,7 @@ export class AuthService {
     firebase.auth().signOut();
     this.helperService.addToLocalStorage(isAuthorized, this.isUserAuthorized.value.toString())
     this.helperService.addToLocalStorage(isLoggedIn, this.isUserLoggedIn.value.toString())
+    alert("You have been logged out");
     this.router.navigate(['/login']);
   }
 

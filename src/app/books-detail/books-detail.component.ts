@@ -16,13 +16,14 @@ import { BooksEditDialogComponent } from "../books-edit-dialog/books-edit-dialog
 export class BooksDetailComponent implements OnInit {
 
   categories = ['Technical', 'Fiction', 'Non-Fiction'];
-  valid: boolean = true;
+  isDisabled: boolean = false;
   issued: number;
   selectedBook: Observable<book>;
   filteredBooks: Observable<book[]>;
-  category: string;
+  category: string[];
   isIssued: boolean;
   isAuthorized: boolean;
+  searchValue;
 
   constructor(public booksService: BooksService, public authService: AuthService, public dialog: MatDialog) {
     this.booksService.getJson();
@@ -93,7 +94,7 @@ export class BooksDetailComponent implements OnInit {
 
   likes(id: number) {
     this.booksService.likeBook(id);
-    // this.valid = false;
+    this.isDisabled = true;
   }
 
   isUserAuthorized() {
@@ -105,4 +106,3 @@ export class BooksDetailComponent implements OnInit {
     return localStorage.getItem('isUserLoggedIn');
   }
 }
-

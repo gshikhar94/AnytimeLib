@@ -1,5 +1,6 @@
 .book-card{
-    max-width: 400px;
+    max-width: 200px;
+    text-align: center;
 }
 .userInfo{
     float: right;
@@ -17,7 +18,10 @@
     background-color: #F8F8F8;
     background-size: contain;
 }
-
+.card{
+    max-height: 400px;
+    width: 19rem;
+}
 
 .header{
     text-align: center;
@@ -26,11 +30,29 @@
 .card-img-top{
     max-height: 250px;
 }  
+.row{
+    overflow-y:hidden;
+    overflow-x:hidden;
+}
+* {
+    box-sizing: border-box;
+}
 
-.search{
-    margin-top:10px;
-    float:center;
+
+@media screen and (max-width: 600px) {
+    .search {
+        font-size: 10px;    
+    }
 }
-.modal{
-    /* width:500px; */
+
+@media screen and (max-width: 600px) {
+    mat-form-field{
+       width: 80px;    
+    }
 }
+@media screen and (max-width: 600px) {
+    .selectCategories {
+       width: 20px;    
+    }
+}
+

@@ -1,45 +1,43 @@
 <header class="header">
   <h1>My Books</h1>
 </header>
+<mat-tab-group>
+  <mat-tab label="Books">
+    <div class="row search">
+      <div class="col-2 col-md-2 col-sm-2">
 
-<div class="row search">
-  <div class="col-5 col-md-5">
-
-  </div>
-  <div class="col-7 col-md-7">
-    <div class="search">
-      <form class="search-form">
-        <mat-form-field class="search-full-width">
-          <input matInput [(ngModel)]="searchValue" placeholder="Search" name="search" (keyup.enter)="filterSearch(searchValue,'name')">
-        </mat-form-field>
-      </form>
-    </div>
-    <button mat-raised-button color="primary" *ngIf="isUserAuthorized()=='true'" data-toggle="modal" data-target="#addBookModal">Add a book</button>
-    <button mat-raised-button color="primary" routerLink="/booklogs" *ngIf="isUserAuthorized()=='true'">Book Logs</button>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-3 col-md-3">
-    <div class="card" style="width: 18rem;">
-      <div class="card-body">
+      </div>
+      <div class="col-3 col-md-3 col-sm-3">
+        <br>
         <mat-form-field>
-          <mat-select placeholder="Categories" [(ngModel)]="category" (change)="searchSomething( category,'category')" multiple>
+          <mat-select class="selectCategories" placeholder="Categories" [(ngModel)]="category" (change)="searchSomething( category,'category')"
+            multiple>
             <mat-option *ngFor="let category of categories" [value]="category">{{category}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <br>
         <button mat-button *ngIf="category" (click)="removeFilter('category')">
           Remove filter
         </button>
       </div>
+      <div class="col-3 col-md-3 col-sm-3">
+        <br>
+        <div class="search">
+          <form class="search-form">
+            <mat-form-field class="search-full-width">
+              <input matInput [(ngModel)]="searchValue" placeholder="Search" name="search" (keyup.enter)="filterSearch(searchValue,'name')">
+            </mat-form-field>
+          </form>
+        </div>
+      </div>
+      <div class="col-3 col-md-3 col-sm-3">
+        <br>
+        <button mat-raised-button color="primary" (click)="filterSearch(searchValue,'name')">Search</button>
+      </div>
     </div>
-  </div>
-  <div class="col-9 col-md-9">
     <div class="flex-container" *ngIf="(filteredBooks|async) else loading">
       <div class="book-item" *ngFor="let book of filteredBooks|async" (click)="selectBook(book)">
-        <div class="card" style="width: 18rem;">
-          <img class="card-img-top" [src]="book.imageUrl" alt="Card image cap">
+        <div class="card">
+          <img class="card-img-top" [src]="book.imageUrl" alt="Card image cap" data-toggle="modal" data-target="#issueBookModal">
           <div class="card-body">
             <h5 class="card-title">{{book.name}}</h5>
             <p>
@@ -50,18 +48,25 @@
             <button *ngIf="isUserAuthorized()=='false'" class="btn btn-info" data-toggle="modal" data-target="#issueBookModal">Issue/Return</button>
             <button *ngIf="isUserAuthorized()=='true'" class="btn btn-warn" (click)="deleteBook(book.id)">Delete</button>
             <button *ngIf="isUserAuthorized()=='true'" class="btn btn-info" (click)="openDialog(book)">Edit</button>
-            <button name='likeButton' class="btn btn-primary" (click)="likes(book.id)" [disabled]="!valid">LIKE
+            <button name='likeButton' class="btn btn-primary" (click)="likes(book.id)" [disabled]="isDisabled">LIKE
               <i class="far fa-thumbs-up"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <br>
-</div>
+  </mat-tab>
+  <mat-tab label="Book Logs" *ngIf="isUserAuthorized()=='true'">
+    <app-book-logs></app-book-logs>
+  </mat-tab>
+  <mat-tab label="Add a Book" *ngIf="isUserAuthorized()=='true'">
+    <app-add-book></app-add-book>
+    <!-- <button mat-raised-button color="primary" *ngIf="isUserAuthorized()=='true'" data-toggle="modal" data-target="#addBookModal">Add a book</button> -->
+  </mat-tab>
+</mat-tab-group>
+<br>
 <app-book-detail [book]="selectedBook"></app-book-detail>
-<app-add-book></app-add-book>
+
 <ng-template #loading>
-  <mat-spinner></mat-spinner>
+  <app-spinner></app-spinner>
 </ng-template>

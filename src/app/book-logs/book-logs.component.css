@@ -6,7 +6,7 @@
   }
   
   .mat-table {
-    overflow: auto;
+    overflow-x: hidden;
     max-height: 500px;
   }
   /* .card{
@@ -16,4 +16,7 @@
 .search-form{
   margin: 20px auto;
   float: none;
+}
+.book-logs{
+  margin-left:15px;
 }

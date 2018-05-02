@@ -1,32 +1,31 @@
-
-<div class="container">
+<div class="book-logs">
   <h2>Books Logs</h2>
   <p>Here Admin can see the user logs and delete whatever he wants</p>
   <div class="table-responsive">
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>BookId</th>
-          <th>BookName</th>
-          <th>UserName</th>
-          <th>IssuedDate</th>
-          <th>Status</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody *ngIf="bookIssuedData">
-        <tr *ngFor="let book of bookIssuedData">
-          <!-- <td *ngFor="let d in data">
-            {{d}}
-          </td> -->
-          <td>{{book.bookId}}</td>
-          <td>{{book.bookName}}</td>
-          <td>{{book.userName}}</td>
-          <td>{{book.issuedDate}}</td>
-          <td style="color:green">Issued</td>
-          <button mat-raised-button color="warn" (click)="deleteIssuedBook(book.id)">Delete</button>
-        </tr>
-      </tbody>
-    </table>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th>BookId</th>
+            <th>BookName</th>
+            <th>UserName</th>
+            <th>IssuedDate</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody *ngIf="(bookIssuedData|async) else loading">
+          <tr *ngFor="let book of bookIssuedData|async">
+            <td>{{book.bookId}}</td>
+            <td>{{book.bookName}}</td>
+            <td>{{book.userName}}</td>
+            <td>{{book.issuedDate}}</td>
+            <td style="color:green">Issued</td>
+            <button mat-raised-button color="warn" (click)="deleteIssuedBook(book.id)">Delete</button>
+          </tr>
+        </tbody>
+      </table>
   </div>
 </div>
+<ng-template #loading>
+    <app-spinner></app-spinner>
+  </ng-template>

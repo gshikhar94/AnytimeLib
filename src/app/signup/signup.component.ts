@@ -18,6 +18,7 @@ export class SignupComponent implements OnInit {
   items: any;
   users: Array<Users>;
   signUpForm: FormGroup;
+  emailError: string = "";
   constructor(public af: AuthService, private fb: FormBuilder,
     public router: Router, public authDatabase: AngularFireDatabase, public authService: AuthService) {
     this.users = [];
@@ -30,8 +31,8 @@ export class SignupComponent implements OnInit {
   createForm() {
     this.signUpForm = this.fb.group({
       name: ["", Validators.required],
-      email: ["", Validators.required],
-      phone: ["", Validators.required],
+      email: ["", Validators.required, Validators.email],
+      phone: ["", Validators.required, Validators.maxLength(10)],
       dob: ["", Validators.required],
       password: ["", Validators.required]
     })
@@ -77,4 +78,14 @@ export class SignupComponent implements OnInit {
   resetForm() {
     this.signUpForm.reset();
   }
+
+  // getErrorMeassage(field: string) {
+  //   console.log(field);
+  //   if (this.signUpForm.get(field).hasError('required')) {
+  //     this.emailError = 'You must enter a value';
+  //   }
+  //   else if (this.signUpForm.get(field).hasError('email')) {
+  //     this.emailError = 'Not a valid email';
+  //   }
+  // }
 }

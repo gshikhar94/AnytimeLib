@@ -84,15 +84,15 @@ export class BooksService {
   }
 
   getIssuedBooksDetails() {
-    let books = this.database.list<IssuedBookDetails>("/IssuedBooks/", ref => ref.orderByChild('userId')).valueChanges();
-    return books;
+    return this.database.list<IssuedBookDetails>("/IssuedBooks/", ref => ref.orderByChild('userId')).valueChanges().delay(1000);
+
   }
   deleteIssuedBookDetails(recordId) {
     this.database.object<IssuedBookDetails>("/IssuedBooks/" + recordId).remove();
   }
-  getLikes(bookId) {
-    return this.database.object<book>("/Books/" + bookId).valueChanges();
-  }
+  // getLikes(bookId) {
+  //   return this.database.object<book>("/Books/" + bookId).valueChanges();
+  // }
 
   returnBook(bookId: number) {
     console.log("hi");
@@ -150,7 +150,22 @@ export class BooksService {
   }
 
   deleteBook(bookId: number) {
-    this.database.object<book>('/Books/' + bookId).remove();
+    this.database.object<book>('/Books/' + bookId).remove()
+      .then(success => alert("Book has been deleted"))
+      .catch(error => console.log(error));
+
+    let issuedBooksDetails = this.database.list<IssuedBookDetails>("/IssuedBooks", ref => ref.orderByChild('bookId')).valueChanges();
+    issuedBooksDetails.subscribe(
+      bookDetails => {
+        for (let book of bookDetails) {
+          if (book.bookId == bookId) {
+            console.log(book);
+            console.log(this.authService.getCurrentUserId());
+            this.database.object<IssuedBookDetails>('/IssuedBooks/' + book.id).remove();
+          }
+        }
+      }
+    )
   }
 
   getTodaysDate() {
@@ -168,14 +183,15 @@ export class BooksService {
       let responseJson = response.json();
       console.log(responseJson);
       for (let i = 0; i < responseJson['items'].length; i++) {
-        console.log(responseJson['items'][i].volumeInfo.title);
-        console.log(responseJson['items'][i].volumeInfo.authors);
-        console.log(responseJson['items'][i].volumeInfo.imageLinks.thumbnail);
-        books = new book(null, responseJson['items'][i].volumeInfo.title, responseJson['items'][i].volumeInfo.authors[0], 0,
-          responseJson['items'][i].volumeInfo.imageLinks.thumbnail, 10, responseJson['items'][i].volumeInfo.category,
-          responseJson['items'][i].volumeInfo.rating)
+        books = new book(isbn, responseJson['items'][i].volumeInfo.title, responseJson['items'][i].volumeInfo.authors[0], 0,
+          responseJson['items'][i].volumeInfo.imageLinks.thumbnail, 10, responseJson['items'][i].volumeInfo.categories[0],
+          0)
         this.book.next(books);
       }
     })
+  }
+
+  addbookDetails(book: book) {
+    var ref = this.database.database.ref("/Books").child(book.id.toString()).set(book);
   }
 }

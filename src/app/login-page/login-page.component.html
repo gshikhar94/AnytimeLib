@@ -1,48 +1,38 @@
-<div class="card" style="width: 36rem;height:23rem">
+<div class="card" *ngIf="!isLoggedIn; else loading">
   <div class="card-header text-white" style="background-color:#3F51B5">Login</div>
-  <div class="row">
-    <div class="col-7 col-md-7">
-      <form novalidate class="login" [formGroup]="loginForm" (ngSubmit)="login()" (keyup.enter)="login()">
-        <p>
-          <mat-form-field class="example-full-width">
-            <input matInput placeholder="Email" type="text" formControlName="email" required>
-          </mat-form-field>
-          <br>
+  <form novalidate class="login" [formGroup]="loginForm" (ngSubmit)="login()">
+    <p>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Email" type="text" formControlName="email" required>
+      </mat-form-field>
+      <br>
 
-          <mat-form-field class="example-full-width">
-            <input matInput placeholder="Password" type="password" formControlName="password" required>
-          </mat-form-field>
-        </p>
+      <mat-form-field class="example-full-width">
+        <input matInput placeholder="Password" type="password" formControlName="password" required>
+      </mat-form-field>
+    </p>
 
-        <p style='color:red' *ngIf="loginError">{{errorMessage}}</p>
-        <button mat-raised-button color="warn" (click)="resetForm()">Cancel</button>
-        <button type="submit" mat-raised-button color="primary">Login</button>
-        <br>
-        <br>
-        <br>
+    <p style='color:red' *ngIf="loginError">{{errorMessage}}</p>
+    <button mat-raised-button color="warn" (click)="resetForm()">Cancel</button>
+    <button type="submit" mat-raised-button color="primary">Login</button>
 
-      </form>
-    </div>
-    <ng-template #loading>
-      <mat-spinner></mat-spinner>
-    </ng-template>
-    <div style="text-align:center;" class="col-5 col-md-5">
-      <br>
-      <br>
-      <button mat-raised-button color="accent" (click)="loginWithGoogle()">Login with Google
-        <i class="fab fa-google-plus"></i>
-      </button>
-      <br>
-      <br>
-      <button mat-raised-button color="primary">Login with Facebook
-        <i class="fab fa-facebook"></i>
-      </button>
-      <br>
-      <br>
-      <p>or</p>
-      <p>
-        <a href="signup" style="color:red;">Register with us</a>
-      </p>
-    </div>
+  </form>
+  <div class="loginform">
+    <button mat-raised-button color="accent" (click)="loginWithGoogle()">Login with Google
+      <i class="fab fa-google-plus"></i>
+    </button>
+
+    <button mat-raised-button color="primary" (click)="loginWithFacebook()">Login with Facebook
+      <i class="fab fa-facebook"></i>
+    </button>
+
+    <p>or</p>
+    <p>
+      <a href="signup" style="color:red;">Register with us</a>
+    </p>
   </div>
+
 </div>
+<ng-template #loading >
+  <app-spinner></app-spinner>
+</ng-template>

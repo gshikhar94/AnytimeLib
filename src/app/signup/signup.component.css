@@ -1,6 +1,8 @@
 .card{
-    margin: 50px auto;
+    margin: 60px auto;
     float: none;
+    width: 30rem;
+    height:35rem;
 }
 .signup{
  margin: 35px; 
@@ -8,4 +10,11 @@
 }
 .example-full-width {
     width: 100%;
+    
   }
+  @media screen and (max-width: 600px) {
+    .card {
+        width: 20rem;
+        font-size:10px;
+    }
+}

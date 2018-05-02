@@ -33,7 +33,11 @@ export class LoginPageComponent implements OnInit {
   }
 
   loginWithGoogle() {
-    this.authService.loginWithGoogle().then((data) => {
+    this.authService.loginWithGoogle();
+  }
+
+  loginWithFacebook() {
+    this.authService.loginWithFacebook().then((data) => {
       this.authService.saveCurrentUser();
       this.router.navigate(['/bookDetails']);
     })

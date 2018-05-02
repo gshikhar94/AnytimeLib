@@ -1,35 +1,36 @@
 <!-- Modal -->
-<div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="addBookModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-md" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Book</h5>
-        <button type="button" #close class="close" data-dismiss="modal" aria-label="Close">
+        <h5 class="modal-title" id="exampleModalLabel">Add Book</h5> -->
+        <!-- <button type="button" #close class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+        </button> -->
+      <!-- </div> -->
       <div class="modal-body">
         <form class="search-form">
           <mat-form-field class="search-full-width">
             <input matInput #searchValue placeholder="Search Book By ISBN" name="search" class="search" (keyup.enter)="searchByIsbn(searchValue.value)">
           </mat-form-field>
+          <p style="color:green">{{message}}</p>
         </form>
         <div class="card" style="width: 18rem;height:23rem" *ngIf="books">
           <img class="card-img-top" [src]="books.imageUrl" alt="Card image cap">
           <div class="card-body">
             <h5 class="card-title">{{books.name}}</h5>
-            <h5>{{books.authorName}}</h5>
+            <h6>{{books.authorName}}</h6>
+            Category:
             <p>
-              <i class="fas fa-heart"></i>
-              <b>{{books.likes}} Likes</b>
+              {{books.category}}
             </p>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button mat-raised-button color="primary">Add Book</button>
+        <button mat-raised-button color="primary" (click)="addBook(books)">Add Book</button>
         <!-- <button mat-raised-button color="warn" style="float:right" (click)="searchByIsbn(null)">Close</button> -->
-      </div>
+      <!-- </div>
     </div>
   </div>
-</div>
+</div> -->

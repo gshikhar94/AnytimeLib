@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatTableDataSource } from '@angular/material';
 import { BooksService } from '../providers/books.service';
 import { IssuedBookDetails } from '../IssuedBookDetails';
+import { Observable } from "rxjs/Observable";
 
 @Component({
   selector: 'app-book-logs',
@@ -10,7 +11,7 @@ import { IssuedBookDetails } from '../IssuedBookDetails';
 })
 export class BookLogsComponent implements OnInit {
 
-  bookIssuedData: IssuedBookDetails[] = [];
+  bookIssuedData: Observable<IssuedBookDetails[]>;
 
   constructor(private bookService: BooksService) {
     this.getIssuedBooksDetails();
@@ -20,10 +21,11 @@ export class BookLogsComponent implements OnInit {
   }
 
   getIssuedBooksDetails() {
-    this.bookService.getIssuedBooksDetails().subscribe(books => {
-      this.bookIssuedData = books;
-      console.log(this.bookIssuedData);
-    })
+    // this.bookService.getIssuedBooksDetails().subscribe(books => {
+    //   this.bookIssuedData = books;
+    //   console.log(this.bookIssuedData);
+    // })
+    this.bookIssuedData = this.bookService.getIssuedBooksDetails();
   }
   deleteIssuedBook(recordId: string) {
     this.bookService.deleteIssuedBookDetails(recordId);
